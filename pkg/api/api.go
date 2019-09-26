@@ -23,6 +23,10 @@ func (it *API) GetShoppingList(ctx context.Context, request *GetShoppingListRequ
 	return shoppingList, nil
 }
 
+func (it *API) GetActiveShoppingList(context.Context, *GetActiveShoppingListRequest) (*ShoppingList, error) {
+	return shoppingList, nil
+}
+
 func (it *API) GetAllItems(ctx context.Context, request *GetAllItemsRequest) (*GetAllItemsResponse, error) {
 	return &GetAllItemsResponse{
 		Items: items,
