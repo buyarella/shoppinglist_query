@@ -11,6 +11,6 @@ require (
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/sirupsen/logrus v1.2.0
 	github.com/stretchr/testify v1.4.0
-	github.com/typusomega/cqrsorders v0.0.0-20190915165906-d112bc818b64
+	github.com/typusomega/poligo v0.0.0-20190415051136-3fc07d5996b0
 	google.golang.org/grpc v1.23.1
 )

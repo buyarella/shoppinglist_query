@@ -1,14 +1,17 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"net"
+	"time"
 
 	"google.golang.org/grpc"
 
 	"github.com/buyarella/shoppinglist_query/pkg/api"
 	"github.com/buyarella/shoppinglist_query/pkg/config"
 	"github.com/buyarella/shoppinglist_query/pkg/repository"
+	"github.com/typusomega/poligo/pkg/policy"
 
 	"github.com/sirupsen/logrus"
 )
@@ -24,12 +27,18 @@ func main() {
 		mainLog.Fatalf("could not create listener on address: %s", address)
 	}
 
-	shoppingListsRepository, err := repository.NewRepository(cfg.DatabaseConnectionString)
+	shoppingListsRepository, err := policy.HandleAll().
+		Retry(
+			policy.WithDurations(time.Second, time.Second, time.Second),
+			policy.WithCallback(func(err error, retryCount int) { mainLog.WithError(err).Warn("retrying to connect to database") }),
+		).
+		Execute(context.Background(), func() (interface{}, error) { return repository.NewRepository(cfg.DatabaseConnectionString) })
+
 	if err != nil {
 		panic(err)
 	}
 
-	apiServer := api.New(shoppingListsRepository)
+	apiServer := api.New(shoppingListsRepository.(repository.Repository))
 
 	grpcServer := grpc.NewServer()
 	api.RegisterShoppingListQueriesServer(grpcServer, apiServer)

@@ -19,6 +19,7 @@ type Repository interface {
 
 func NewRepository(databaseConnectionString string) (Repository, error) {
 	db, err := gorm.Open("postgres", databaseConnectionString)
+
 	if err != nil {
 		return nil, err
 	}
