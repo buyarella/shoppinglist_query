@@ -24,7 +24,7 @@ func (it *API) GetAllShoppingLists(ctx context.Context, request *GetAllShoppingL
 	}
 
 	return &GetAllShoppingListsResponse{
-		ItemsToBuy: allShoppingLists,
+		ShoppingLists: allShoppingLists,
 	}, nil
 }
 
