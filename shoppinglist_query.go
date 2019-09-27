@@ -8,6 +8,7 @@ import (
 
 	"github.com/buyarella/shoppinglist_query/pkg/api"
 	"github.com/buyarella/shoppinglist_query/pkg/config"
+	"github.com/buyarella/shoppinglist_query/pkg/repository"
 
 	"github.com/sirupsen/logrus"
 )
@@ -23,7 +24,12 @@ func main() {
 		mainLog.Fatalf("could not create listener on address: %s", address)
 	}
 
-	apiServer := api.New()
+	shoppingListsRepository, err := repository.NewRepository(cfg.DatabaseConnectionString)
+	if err != nil {
+		panic(err)
+	}
+
+	apiServer := api.New(shoppingListsRepository)
 
 	grpcServer := grpc.NewServer()
 	api.RegisterShoppingListQueriesServer(grpcServer, apiServer)
