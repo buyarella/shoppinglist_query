@@ -19,8 +19,8 @@ func (it *API) GetAllShoppingLists(ctx context.Context, request *GetAllShoppingL
 	shoppingLists := it.repository.GetAllShoppingLists(shoppinglist.User{})
 
 	allShoppingLists := make([]*ShoppingList, len(shoppingLists))
-	for _, list := range shoppingLists {
-		allShoppingLists = append(allShoppingLists, ShoppingListFromModelToAPI(list))
+	for idx, list := range shoppingLists {
+		allShoppingLists[idx] = ShoppingListFromModelToAPI(list)
 	}
 
 	return &GetAllShoppingListsResponse{
@@ -54,8 +54,8 @@ func (it *API) GetAllItems(ctx context.Context, request *GetAllItemsRequest) (*G
 	items := it.repository.GetAllItems()
 
 	allItems := make([]*Item, len(items))
-	for _, item := range items {
-		allItems = append(allItems, ItemFromModelToAPI(item))
+	for idx, item := range items {
+		allItems[idx] = ItemFromModelToAPI(item)
 	}
 
 	return &GetAllItemsResponse{

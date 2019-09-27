@@ -40,6 +40,9 @@ func main() {
 
 	apiServer := api.New(shoppingListsRepository.(shoppinglist.Repository))
 
+	resp, err := apiServer.GetAllShoppingLists(context.Background(), &api.GetAllShoppingListsRequest{})
+	fmt.Print(resp)
+
 	grpcServer := grpc.NewServer()
 	api.RegisterShoppingListQueriesServer(grpcServer, apiServer)
 

@@ -10,14 +10,14 @@ import (
 func ShoppingListFromAPIToModel(shoppingList *ShoppingList) *model.ShoppingList {
 	entries := shoppingList.GetEntries()
 	newEntries := make([]model.Entry, len(entries))
-	for _, entry := range entries {
-		newEntries = append(newEntries, ShoppingListEntryFromAPIToModel(entry))
+	for idx, entry := range entries {
+		newEntries[idx] = ShoppingListEntryFromAPIToModel(entry)
 	}
 
 	users := shoppingList.GetSharedWith()
 	sharedWith := make([]model.User, len(users))
-	for _, user := range users {
-		sharedWith = append(sharedWith, UserFromAPIToModel(user))
+	for idx, user := range users {
+		sharedWith[idx] = UserFromAPIToModel(user)
 	}
 
 	return &model.ShoppingList{
@@ -95,14 +95,14 @@ func TimestampToTime(timestamp *timestamp.Timestamp) time.Time {
 func ShoppingListFromModelToAPI(shoppingList model.ShoppingList) *ShoppingList {
 	entries := shoppingList.Entries
 	allEntries := make([]*ShoppingListEntry, len(entries))
-	for _, entry := range entries {
-		allEntries = append(allEntries, ShoppingListEntryFromModelToAPI(entry))
+	for idx, entry := range entries {
+		allEntries[idx] = ShoppingListEntryFromModelToAPI(entry)
 	}
 
 	users := shoppingList.SharedWith
 	sharedWith := make([]*User, len(users))
-	for _, user := range users {
-		sharedWith = append(sharedWith, UserFromModelToAPI(user))
+	for idx, user := range users {
+		sharedWith[idx] = UserFromModelToAPI(user)
 	}
 
 	return &ShoppingList{
