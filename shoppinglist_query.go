@@ -10,7 +10,7 @@ import (
 
 	"github.com/buyarella/shoppinglist_query/pkg/api"
 	"github.com/buyarella/shoppinglist_query/pkg/config"
-	"github.com/buyarella/shoppinglist_query/pkg/repository"
+	"github.com/buyarella/shoppinglist_query/pkg/shoppinglist"
 	"github.com/typusomega/poligo/pkg/policy"
 
 	"github.com/sirupsen/logrus"
@@ -32,13 +32,13 @@ func main() {
 			policy.WithDurations(time.Second, time.Second, time.Second),
 			policy.WithCallback(func(err error, retryCount int) { mainLog.WithError(err).Warn("retrying to connect to database") }),
 		).
-		Execute(context.Background(), func() (interface{}, error) { return repository.NewRepository(cfg.DatabaseConnectionString) })
+		Execute(context.Background(), func() (interface{}, error) { return shoppinglist.NewRepository(cfg.DatabaseConnectionString) })
 
 	if err != nil {
 		panic(err)
 	}
 
-	apiServer := api.New(shoppingListsRepository.(repository.Repository))
+	apiServer := api.New(shoppingListsRepository.(shoppinglist.Repository))
 
 	grpcServer := grpc.NewServer()
 	api.RegisterShoppingListQueriesServer(grpcServer, apiServer)

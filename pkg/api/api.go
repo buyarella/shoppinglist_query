@@ -3,20 +3,20 @@ package api
 import (
 	"context"
 
-	"github.com/buyarella/shoppinglist_query/pkg/repository"
-	"github.com/buyarella/shoppinglist_query/pkg/repository/model"
+	"github.com/buyarella/shoppinglist_query/pkg/shoppinglist"
+	"github.com/joomcode/errorx"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
 )
 
-func New(repo repository.Repository) *API {
+func New(repo shoppinglist.Repository) *API {
 	return &API{
 		repository: repo,
 	}
 }
 
 func (it *API) GetAllShoppingLists(ctx context.Context, request *GetAllShoppingListsRequest) (*GetAllShoppingListsResponse, error) {
-	shoppingLists := it.repository.GetAllShoppingLists(model.User{})
+	shoppingLists := it.repository.GetAllShoppingLists(shoppinglist.User{})
 
 	allShoppingLists := make([]*ShoppingList, len(shoppingLists))
 	for _, list := range shoppingLists {
@@ -29,9 +29,12 @@ func (it *API) GetAllShoppingLists(ctx context.Context, request *GetAllShoppingL
 }
 
 func (it *API) GetShoppingList(ctx context.Context, request *GetShoppingListRequest) (*ShoppingList, error) {
-	shoppingList, err := it.repository.GetShoppingList(model.ShoppingList{Name: request.GetName()})
+	shoppingList, err := it.repository.GetShoppingList(shoppinglist.ShoppingList{Name: request.GetName()})
 	if err != nil {
-		return nil, status.Error(codes.NotFound, "shoppingList was not found")
+		if errorx.HasTrait(err, errorx.NotFound()) {
+			return nil, status.Error(codes.NotFound, request.GetName())
+		}
+		return nil, status.Errorf(codes.Internal, "could not retrieve shoppinglist: %v", request.GetName())
 	}
 	return ShoppingListFromModelToAPI(shoppingList), nil
 }
@@ -39,7 +42,10 @@ func (it *API) GetShoppingList(ctx context.Context, request *GetShoppingListRequ
 func (it *API) GetActiveShoppingList(context.Context, *GetActiveShoppingListRequest) (*ShoppingList, error) {
 	shoppingList, err := it.repository.GetActiveShoppingList()
 	if err != nil {
-		return nil, status.Error(codes.NotFound, "shoppingList was not found")
+		if errorx.HasTrait(err, errorx.NotFound()) {
+			return nil, status.Error(codes.NotFound, "active shoppinglist")
+		}
+		return nil, status.Error(codes.Internal, "could not retrieve active shoppinglist")
 	}
 	return ShoppingListFromModelToAPI(shoppingList), nil
 }
@@ -58,5 +64,5 @@ func (it *API) GetAllItems(ctx context.Context, request *GetAllItemsRequest) (*G
 }
 
 type API struct {
-	repository repository.Repository
+	repository shoppinglist.Repository
 }

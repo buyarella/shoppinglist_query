@@ -3,13 +3,13 @@ package api
 import (
 	"time"
 
-	"github.com/buyarella/shoppinglist_query/pkg/repository/model"
+	model "github.com/buyarella/shoppinglist_query/pkg/shoppinglist"
 	timestamp "github.com/golang/protobuf/ptypes/timestamp"
 )
 
 func ShoppingListFromAPIToModel(shoppingList *ShoppingList) *model.ShoppingList {
 	entries := shoppingList.GetEntries()
-	newEntries := make([]model.ShoppingListEntry, len(entries))
+	newEntries := make([]model.Entry, len(entries))
 	for _, entry := range entries {
 		newEntries = append(newEntries, ShoppingListEntryFromAPIToModel(entry))
 	}
@@ -31,8 +31,8 @@ func ShoppingListFromAPIToModel(shoppingList *ShoppingList) *model.ShoppingList 
 	}
 }
 
-func ShoppingListEntryFromAPIToModel(entry *ShoppingListEntry) model.ShoppingListEntry {
-	return model.ShoppingListEntry{
+func ShoppingListEntryFromAPIToModel(entry *ShoppingListEntry) model.Entry {
+	return model.Entry{
 		Name:        entry.GetName(),
 		CreateTime:  TimestampToTime(entry.GetCreateTime()),
 		UpdateTime:  TimestampToTime(entry.GetUpdateTime()),
@@ -116,11 +116,11 @@ func ShoppingListFromModelToAPI(shoppingList model.ShoppingList) *ShoppingList {
 	}
 }
 
-func ShoppingListEntryFromModelToAPI(entry model.ShoppingListEntry) *ShoppingListEntry {
+func ShoppingListEntryFromModelToAPI(entry model.Entry) *ShoppingListEntry {
 	return &ShoppingListEntry{
 		Name:        entry.Name,
 		CreateTime:  TimeToTimestamp(entry.CreateTime),
-		UpdateTime:  TimeToTimestamp(entry.UpdatedAt),
+		UpdateTime:  TimeToTimestamp(entry.UpdateTime),
 		BoughtTime:  TimeToTimestamp(entry.BoughtTime),
 		RemovedTime: TimeToTimestamp(entry.RemovedTime),
 		Item:        ItemFromModelToAPI(entry.Item),

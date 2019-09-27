@@ -1,25 +1,22 @@
-package model
+package shoppinglist
 
 import (
 	"time"
-
-	"github.com/jinzhu/gorm"
 )
 
 type ShoppingList struct {
-	gorm.Model
-	Name        string `gorm:"primary_key"`
+	Name        string
 	DisplayName string
-	Entries     []ShoppingListEntry
+	Entries     []Entry
 	CreateTime  time.Time
 	UpdateTime  time.Time
 	Creator     User
 	SharedWith  []User
+	IsActive    bool
 }
 
-type ShoppingListEntry struct {
-	gorm.Model
-	Name        string `gorm:"primary_key"`
+type Entry struct {
+	Name        string
 	CreateTime  time.Time
 	UpdateTime  time.Time
 	BoughtTime  time.Time
@@ -31,21 +28,18 @@ type ShoppingListEntry struct {
 }
 
 type Item struct {
-	gorm.Model
-	Name        string `gorm:"primary_key"`
+	Name        string
 	DisplayName string
 	ImageURL    string
 }
 
 type Amount struct {
-	gorm.Model
 	Count int32
 	Unit  Unit
 }
 
 type Offering struct {
-	gorm.Model
-	Name     string `gorm:"primary_key"`
+	Name     string
 	Item     Item
 	Vendor   Vendor
 	Price    float32
@@ -54,16 +48,14 @@ type Offering struct {
 }
 
 type Vendor struct {
-	gorm.Model
-	Name        string `gorm:"primary_key"`
+	Name        string
 	DisplayName string
 	CreateTime  time.Time
 	UpdateTime  time.Time
 }
 
 type User struct {
-	gorm.Model
-	Name     string `gorm:"primary_key"`
+	Name     string
 	Email    string
 	Fistname string
 	Lastname string

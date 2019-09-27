@@ -48,3 +48,6 @@ generate:
 
 build:
 		$(Q)$(GOARGS) go build -gcflags "all=-trimpath=${GOPATH}" -asmflags "all=-trimpath=${GOPATH}" -o ./artifacts/$(SERVICE_NAME) ./$(SERVICE_NAME).go
+
+run: build
+	./artifacts/$(SERVICE_NAME)
